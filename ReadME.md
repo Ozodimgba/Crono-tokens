@@ -1,0 +1,1 @@
+ChronoTokens are a new token primitive built specifically for memecoins. It incentivizes token holders to keep the meme alive!
