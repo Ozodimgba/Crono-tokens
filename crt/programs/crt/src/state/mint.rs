@@ -7,6 +7,7 @@ pub struct Mint {
     pub is_initialized: bool,
     pub freeze_authority: Option<Pubkey>,
     pub supply: u64,
+    pub pause_hook: Pubkey,
 }
 
 impl Mint {

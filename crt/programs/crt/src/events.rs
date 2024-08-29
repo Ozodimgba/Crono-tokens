@@ -16,3 +16,9 @@ pub struct BurnEvent {
     pub amount: u64,
     pub new_balance: u64,
 }
+
+#[event]
+pub struct PauseEvent {
+    pub mint: Pubkey,
+    pub token_account: Pubkey,
+}

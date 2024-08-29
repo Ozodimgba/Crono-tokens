@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use crate::state::{Mint, TokenAccount, DecayPool};
+use crate::state::{Mint, TokenAccount};
 use crate::error::TokenError;
 use crate::events::MintToEvent;
 use crate::utils::evaluate_balance;

@@ -24,4 +24,6 @@ pub enum TokenError {
     BalanceEvaluationError,
     #[msg("Invalid mint authority for operation")]
     InvalidMintAuthority,
+    #[msg("Account is already paused")]
+    AlreadyPaused,
 }

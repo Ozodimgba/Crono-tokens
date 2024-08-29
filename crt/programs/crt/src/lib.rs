@@ -4,6 +4,7 @@ pub mod instructions;
 pub mod error;
 pub mod state;
 pub mod events;
+mod extensions;
 
 use instructions::*;
 
@@ -14,8 +15,8 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 pub mod chrono_token {
     use super::*;
 
-    pub fn initialize_mint(ctx: Context<InitializeMint>, decimals: u8, supply: u64, freeze_authority: Option<Pubkey>, _bump: u8) -> Result<()> {
-        instructions::initialize_mint::handler(ctx, decimals, supply, freeze_authority, _bump)
+    pub fn initialize_mint(ctx: Context<InitializeMint>, decimals: u8, supply: u64, freeze_authority: Option<Pubkey>, _bump: u8, enable_chrono_hook: bool, chrono_hook_program_id: Option<Pubkey>) -> Result<()> {
+        instructions::initialize_mint::handler(ctx, decimals, supply, freeze_authority, _bump, enable_chrono_hook, chrono_hook_program_id)
     }
 
     pub fn initialize_token_account(ctx: Context<InitializeTokenAccount>, delegate: Option<Pubkey>) -> Result<()> {

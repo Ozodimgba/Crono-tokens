@@ -4,6 +4,7 @@ pub mod transfer;
 pub mod mint_to;
 pub mod burn;
 
+pub mod pause;
 
 pub use initialize_mint::*;
 pub use initialize_token_account::*;
