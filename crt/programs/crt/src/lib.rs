@@ -7,6 +7,7 @@ pub mod events;
 mod extensions;
 
 use instructions::*;
+use crate::state::EquationType;
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -19,8 +20,8 @@ pub mod chrono_token {
         instructions::initialize_mint::handler(ctx, decimals, supply, freeze_authority, _bump, enable_chrono_hook, chrono_hook_program_id)
     }
 
-    pub fn initialize_token_account(ctx: Context<InitializeTokenAccount>, delegate: Option<Pubkey>) -> Result<()> {
-        instructions::initialize_token_account::handler(ctx, delegate)
+    pub fn initialize_token_account(ctx: Context<InitializeTokenAccount>, delegate: Option<Pubkey>, equation_type: EquationType) -> Result<()> {
+        instructions::initialize_token_account::handler(ctx, delegate, equation_type)
     }
 
     pub fn transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {

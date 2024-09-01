@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use super::AccountState;
+use super::{AccountState, EquationType};
 
 #[account]
 pub struct TokenAccount {
@@ -17,6 +17,7 @@ pub struct TokenAccount {
     /// The close authority is only used when closing the account, which is checked separately.
     #[doc(hidden)]
     pub close_authority: Option<Pubkey>,
+    pub equation_type: EquationType,
 }
 
 impl TokenAccount {
