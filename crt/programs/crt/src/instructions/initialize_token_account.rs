@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use crate::state::{TokenAccount, Mint, DecayPool, AccountState, EquationType};
+use crate::state::{TokenAccount, Mint, DecayPool, AccountState, ChronoEquationType};
 
 
 #[derive(Accounts)]
@@ -24,27 +24,28 @@ pub struct InitializeTokenAccount<'info> {
 pub fn handler(
     ctx: Context<InitializeTokenAccount>,
     delegate: Option<Pubkey>,
-    equation_type: EquationType
 ) -> Result<()> {
     let token_account = &mut ctx.accounts.token_account;
+    let decay_pool = &mut ctx.accounts.decay_pool;
+    let mint = &mut ctx.accounts.mint;
     let clock = Clock::get()?;
 
-    token_account.mint = ctx.accounts.mint.key();
+    token_account.mint = mint.key();
     token_account.owner = ctx.accounts.authority.key();
 
     token_account.delegate = delegate.unwrap_or(Pubkey::default());
     token_account.state = AccountState::Initialized;
     token_account.creation_time = clock.unix_timestamp;
+    token_account.last_balance_snapshot = 0;
 
-    token_account.balance = match equation_type {
-        EquationType::Subscription => "0".to_string(), // Starts at 0, will be increased by minting
-        EquationType::Inflationary => "(x / 86400)".to_string(), // Increases by 1 per day
-        EquationType::Deflationary => "0".to_string(), // Starts at 0, will be increased by minting and then decay
-        EquationType::Linear => "0".to_string(), // Starts at 0, will be increased by minting and then decay linearly
-        EquationType::Exponential => "0".to_string(), // Starts at 0, will be increased by minting and then decay exponentially
-    };
+    // should be pda for the token account owned by the chrono program
+    decay_pool.token_account = token_account.key();
+    decay_pool.amount = 0;
 
-    token_account.delegated_amount = "x * 0".to_string();
+
+    token_account.current_chrono_equation = mint.chrono_equation;
+
+    token_account.delegated_amount = 0;
     token_account.close_authority = Some(ctx.accounts.authority.key());
     Ok(())
 }

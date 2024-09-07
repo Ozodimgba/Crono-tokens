@@ -1,20 +1,14 @@
 use anchor_lang::prelude::*;
-use crate::state::{Mint, DecayPool};
+use crate::state::{Mint, DecayPool, EquationParams};
 use crate::error::TokenError;
+use crate::state::{ChronoEquationType, PauseType};
 use crate::extensions::ChronoExtension;
 
 #[derive(Accounts)]
 pub struct InitializeMint<'info> {
     #[account(init, payer = payer, space = Mint::LEN)]
     pub mint: Account<'info, Mint>,
-    #[account(
-        init,
-        payer = payer,
-        space = DecayPool::LEN,
-        seeds = [b"decay_pool", mint.key().as_ref()],
-        bump
-    )]
-    pub decay_pool: Account<'info, DecayPool>,
+    /// decay pool should be set at token account level
     pub authority: Signer<'info>,
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -28,7 +22,10 @@ pub fn handler(
     freeze_authority: Option<Pubkey>,
     _bump: u8,
     enable_chrono_hook: bool,
-    chrono_hook_program_id: Option<Pubkey>
+    chrono_hook_program_id: Option<Pubkey>,
+    equation_type: Option<ChronoEquationType>,
+    pause_type: Option<PauseType>,
+    equation_params: Option<EquationParams>,
 ) -> Result<()> {
     let mint = &mut ctx.accounts.mint;
 
@@ -40,12 +37,24 @@ pub fn handler(
     mint.decimals = decimals;
     mint.supply = supply;
     mint.freeze_authority = Some(freeze_authority.expect("Error with freeze authority value"));
+    mint.chrono_equation = equation_type.expect("error with equation type");
+    mint.pause_type = pause_type.expect("error with pause type");
 
     if enable_chrono_hook {
-        if let Some(program_id) = chrono_hook_program_id {
-            let extension = ChronoExtension::new(ctx.accounts.authority.key(), program_id);
+        if let (Some(program_id), Some(eq_type), Some(p_type), Some(params)) = (
+            chrono_hook_program_id,
+            equation_type,
+            pause_type,
+            equation_params,
+        ) {
+            let extension = ChronoExtension::new(
+                ctx.accounts.authority.key(),
+                program_id,
+                eq_type,
+                p_type,
+                params,
+            );
             let extension_data = extension.try_to_vec()?;
-
             // Append extension data to the end of the mint account
             let mint_info = mint.to_account_info();
             let mut data = mint_info.try_borrow_mut_data()?;
@@ -55,6 +64,7 @@ pub fn handler(
             return Err(ProgramError::InvalidArgument.into());
         }
     }
+
 
     Ok(())
 }

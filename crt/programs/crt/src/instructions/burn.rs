@@ -20,7 +20,11 @@ pub fn handler(ctx: Context<Burn>, amount: u64) -> Result<()> {
     let current_time = Clock::get()?.unix_timestamp;
 
     // Evaluate current balance
-    let current_balance = evaluate_balance(&token_account.balance, current_time)?;
+    let current_balance = evaluate_balance(
+        token_account.last_balance_snapshot,
+        &token_account.current_chrono_equation,
+        token_account.creation_time,
+        current_time)?;
 
     // Check if there are sufficient tokens to burn
     if current_balance < amount {
@@ -34,11 +38,7 @@ pub fn handler(ctx: Context<Burn>, amount: u64) -> Result<()> {
     let new_balance = current_balance.checked_sub(amount).ok_or(TokenError::Overflow)?;
 
     // Create a new balance formula that subtracts the burned amount
-    token_account.balance = format!(
-        "max(0, ({}) - {})",
-        token_account.balance,
-        amount
-    );
+    token_account.last_balance_snapshot = new_balance;
 
     // // Update last update time
     // token_account.last_update_time = current_time;

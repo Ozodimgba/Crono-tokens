@@ -21,4 +21,5 @@ pub struct BurnEvent {
 pub struct PauseEvent {
     pub mint: Pubkey,
     pub token_account: Pubkey,
+    pub authority: Pubkey
 }

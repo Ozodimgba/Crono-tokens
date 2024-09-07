@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 #[account]
 pub struct DecayPool {
     pub token_account: Pubkey,
-    pub supply: u64,
+    pub amount: u64,
     pub bump: u8,
 }
 

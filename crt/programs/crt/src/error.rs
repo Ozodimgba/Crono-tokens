@@ -26,4 +26,12 @@ pub enum TokenError {
     InvalidMintAuthority,
     #[msg("Account is already paused")]
     AlreadyPaused,
+    #[msg("Parsed amount is invalid")]
+    InvalidAmount,
+    #[msg("Self transfer cost gas")]
+    SelfTransfer,
+    #[msg("Invalid account data")]
+    InvalidAccountData,
+    #[msg("Mint doesn't allow pausing")]
+    PauseNotAllowed
 }

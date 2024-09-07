@@ -7,7 +7,8 @@ pub mod events;
 mod extensions;
 
 use instructions::*;
-use crate::state::EquationType;
+use crate::state::{ChronoEquationType, PauseType, EquationParams};
+
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -16,11 +17,31 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 pub mod chrono_token {
     use super::*;
 
-    pub fn initialize_mint(ctx: Context<InitializeMint>, decimals: u8, supply: u64, freeze_authority: Option<Pubkey>, _bump: u8, enable_chrono_hook: bool, chrono_hook_program_id: Option<Pubkey>) -> Result<()> {
-        instructions::initialize_mint::handler(ctx, decimals, supply, freeze_authority, _bump, enable_chrono_hook, chrono_hook_program_id)
+    pub fn initialize_mint(ctx: Context<InitializeMint>,
+                           decimals: u8,
+                           supply: u64,
+                           freeze_authority: Option<Pubkey>,
+                           _bump: u8,
+                           enable_chrono_hook: bool,
+                           chrono_hook_program_id: Option<Pubkey>,
+                           equation_type: Option<ChronoEquationType>,
+                           pause_type: Option<PauseType>,
+                           equation_params: Option<EquationParams>
+    ) -> Result<()> {
+        instructions::initialize_mint::handler(ctx,
+                                               decimals,
+                                               supply,
+                                               freeze_authority,
+                                               _bump,
+                                               enable_chrono_hook,
+                                               chrono_hook_program_id,
+                                               equation_type,
+                                               pause_type,
+                                               equation_params
+        )
     }
 
-    pub fn initialize_token_account(ctx: Context<InitializeTokenAccount>, delegate: Option<Pubkey>, equation_type: EquationType) -> Result<()> {
+    pub fn initialize_token_account(ctx: Context<InitializeTokenAccount>, delegate: Option<Pubkey>, equation_type: ChronoEquationType) -> Result<()> {
         instructions::initialize_token_account::handler(ctx, delegate, equation_type)
     }
 
