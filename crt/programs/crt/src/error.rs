@@ -33,5 +33,15 @@ pub enum TokenError {
     #[msg("Invalid account data")]
     InvalidAccountData,
     #[msg("Mint doesn't allow pausing")]
-    PauseNotAllowed
+    PauseNotAllowed,
+    #[msg("Reups not enabled for this mint")]
+    ReUpNotAllowed,
+    #[msg("Invalid ReUp percentage")]
+    InvalidReUpPercentage,
+    #[msg("Mint authority mismatch")]
+    MintAuthorityMismatch,
+    #[msg("Missing ReUp percentage")]
+    MissingReUpPercentage,
+    #[msg("Unexpected ReUp percentage")]
+    UnexpectedReUpPercentage,
 }

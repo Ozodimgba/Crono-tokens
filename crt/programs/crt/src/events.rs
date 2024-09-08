@@ -23,3 +23,13 @@ pub struct PauseEvent {
     pub token_account: Pubkey,
     pub authority: Pubkey
 }
+
+#[event]
+pub struct ReUpEvent {
+    pub mint: Pubkey,
+    pub token_account: Pubkey,
+    pub authority: Pubkey,
+    pub amount: u64,
+    pub new_balance: u64,
+    pub decay_pool_balance: u64,
+}

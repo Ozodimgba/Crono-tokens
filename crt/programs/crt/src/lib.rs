@@ -26,7 +26,8 @@ pub mod chrono_token {
                            chrono_hook_program_id: Option<Pubkey>,
                            equation_type: Option<ChronoEquationType>,
                            pause_type: Option<PauseType>,
-                           equation_params: Option<EquationParams>
+                           equation_params: Option<EquationParams>,
+                           reup_percentage: Option<u8>,
     ) -> Result<()> {
         instructions::initialize_mint::handler(ctx,
                                                decimals,
@@ -37,12 +38,17 @@ pub mod chrono_token {
                                                chrono_hook_program_id,
                                                equation_type,
                                                pause_type,
-                                               equation_params
+                                               equation_params,
+                                               reup_percentage
         )
     }
 
-    pub fn initialize_token_account(ctx: Context<InitializeTokenAccount>, delegate: Option<Pubkey>, equation_type: ChronoEquationType) -> Result<()> {
-        instructions::initialize_token_account::handler(ctx, delegate, equation_type)
+    pub fn initialize_token_account(ctx: Context<InitializeTokenAccount>,
+                                    delegate: Option<Pubkey>,
+    ) -> Result<()> {
+        instructions::initialize_token_account::handler(ctx,
+                                                        delegate,
+        )
     }
 
     pub fn transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
@@ -51,6 +57,10 @@ pub mod chrono_token {
 
     pub fn mint_to(ctx: Context<MintTo>, amount: u64) -> Result<()> {
         instructions::mint_to::handler(ctx, amount)
+    }
+
+    pub  fn reup(ctx: Context<ReUp>) -> Result<()> {
+        instructions::reup::handler(ctx)
     }
 
     pub fn burn(ctx: Context<Burn>, amount: u64) -> Result<()> {

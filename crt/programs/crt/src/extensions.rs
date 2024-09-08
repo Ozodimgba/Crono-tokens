@@ -8,6 +8,7 @@ pub struct ChronoExtension {
     pub equation_type: ChronoEquationType,
     pub pause_type: PauseType,
     pub equation_params: EquationParams,
+    pub reup_percentage: u8,
 }
 
 impl ChronoExtension {
@@ -19,6 +20,7 @@ impl ChronoExtension {
         equation_type: ChronoEquationType,
         pause_type: PauseType,
         equation_params: EquationParams,
+        reup_percentage: u8,
     ) -> Self {
         Self {
             authority,
@@ -26,6 +28,7 @@ impl ChronoExtension {
             equation_type,
             pause_type,
             equation_params,
+            reup_percentage,
         }
     }
 }

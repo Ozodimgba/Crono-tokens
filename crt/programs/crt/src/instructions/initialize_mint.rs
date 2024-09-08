@@ -26,6 +26,7 @@ pub fn handler(
     equation_type: Option<ChronoEquationType>,
     pause_type: Option<PauseType>,
     equation_params: Option<EquationParams>,
+    reup_percentage: Option<u8>,
 ) -> Result<()> {
     let mint = &mut ctx.accounts.mint;
 
@@ -47,13 +48,24 @@ pub fn handler(
             pause_type,
             equation_params,
         ) {
+            // Check if ReUp percentage is provided when pause_type is ReUp
+            let reup_percentage = match (p_type, reup_percentage) {
+                (PauseType::ReUp, Some(percentage)) if percentage <= 100 => percentage,
+                (PauseType::ReUp, Some(_)) => return Err(TokenError::InvalidReUpPercentage.into()),
+                (PauseType::ReUp, None) => return Err(TokenError::MissingReUpPercentage.into()),
+                (_, Some(_)) => return Err(TokenError::UnexpectedReUpPercentage.into()),
+                (_, None) => 0, // Default value when not ReUp
+            };
+
             let extension = ChronoExtension::new(
                 ctx.accounts.authority.key(),
                 program_id,
                 eq_type,
                 p_type,
                 params,
+                reup_percentage,
             );
+
             let extension_data = extension.try_to_vec()?;
             // Append extension data to the end of the mint account
             let mint_info = mint.to_account_info();
