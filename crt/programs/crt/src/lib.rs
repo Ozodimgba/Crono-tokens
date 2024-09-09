@@ -5,12 +5,13 @@ pub mod error;
 pub mod state;
 pub mod events;
 mod extensions;
+mod tokenizer;
 
 use instructions::*;
 use crate::state::{ChronoEquationType, PauseType, EquationParams};
 
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("CYonGNksY6zhLRxKu9Wk5L6p3VqznLfNdKZkAiFvpzt9");
 
 
 #[program]

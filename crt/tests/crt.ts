@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program} from "@coral-xyz/anchor";
-import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
+import { PublicKey, Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import { ChronoToken } from "../target/types/chrono_token";
 import idl from "../target/idl/chrono_token.json"
 
@@ -13,40 +13,51 @@ export class ChronoTokenSDK {
     this.program = new Program<ChronoToken>(idl as ChronoToken, provider);
   }
 
-  async initializeMint(
-      decimals: number,
-      supply: anchor.BN,
-      freezeAuthority: PublicKey,
-      enableChronoHook: boolean,
-      chronoHookProgramId: PublicKey | null,
-      equationType: any,
-      pauseType: any,
-      equationParams: any
-  ): Promise<PublicKey> {
-    const mint = anchor.web3.Keypair.generate();
-    // @ts-ignore
-    await this.program.methods.initializeMint(
-        decimals,
-        supply,
-        freezeAuthority,
-        0,
-        enableChronoHook,
-        chronoHookProgramId,
-        equationType,
-        pauseType,
-        equationParams
-    )
-        .accounts({
-          mint: mint.publicKey,
-          authority: this.provider.wallet.publicKey,
-          payer: this.provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        })
-        .signers([mint])
-        .rpc();
+    async initializeMint(
+        mint: Keypair,
+        decimals: number,
+        supply: anchor.BN,
+        freezeAuthority: PublicKey | null,
+        enableChronoHook: boolean,
+        chronoHookProgramId: PublicKey | null,
+        equationType: ChronoToken["types"][0]["type"]["variants"][number] | null,
+        pauseType: ChronoToken["types"][0]["type"]["variants"][number] | null,
+        equationParams: {
+            snapshotTime?: anchor.BN | null,
+            expirationTime?: anchor.BN | null,
+            inflationRate?: anchor.BN | null,
+            decayRate?: anchor.BN | null,
+            timeUnit?: anchor.BN | null,
+            slope?: anchor.BN | null,
+            decayConstant?: number | null,
+            reupBoost?: anchor.BN | null,
+        } | null,
+        reupPercentage: number | null
+    ) {
+        const tx = await this.program.methods
+            .initializeMint(
+                decimals,
+                supply,
+                freezeAuthority,
+                0, // bump
+                enableChronoHook,
+                chronoHookProgramId,
+                equationType,
+                pauseType,
+                equationParams,
+                reupPercentage
+            )
+            .accounts({
+                mint: mint.publicKey,
+                authority: this.provider.wallet.publicKey,
+                payer: this.provider.wallet.publicKey,
+                systemProgram: SystemProgram.programId,
+            })
+            .signers([mint])
+            .rpc();
 
-    return mint.publicKey;
-  }
+        return tx;
+    }
 
   async initializeTokenAccount(
       mint: PublicKey,
