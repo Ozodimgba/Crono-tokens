@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+
 pub mod utils;
 pub mod instructions;
 pub mod error;
@@ -10,9 +11,7 @@ mod tokenizer;
 use instructions::*;
 use crate::state::{ChronoEquationType, PauseType, EquationParams};
 
-
 declare_id!("CYonGNksY6zhLRxKu9Wk5L6p3VqznLfNdKZkAiFvpzt9");
-
 
 #[program]
 pub mod chrono_token {
@@ -60,12 +59,15 @@ pub mod chrono_token {
         instructions::mint_to::handler(ctx, amount)
     }
 
-    pub  fn reup(ctx: Context<ReUp>) -> Result<()> {
+    pub fn reup(ctx: Context<ReUp>) -> Result<()> {
         instructions::reup::handler(ctx)
+    }
+
+    pub fn pause_decay(ctx: Context<PauseDecay>) -> Result<()> {
+        instructions::pause_decay::handler(ctx)
     }
 
     pub fn burn(ctx: Context<Burn>, amount: u64) -> Result<()> {
         instructions::burn::handler(ctx, amount)
     }
 }
-

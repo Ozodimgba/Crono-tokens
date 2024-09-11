@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 use crate::state::{ChronoEquationType, EquationParams, PauseType};
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
+#[account]
+#[derive(Debug, PartialEq)]
 pub struct ChronoExtension {
     pub authority: Pubkey,
     pub program_id: Pubkey,
@@ -13,6 +14,7 @@ pub struct ChronoExtension {
 
 impl ChronoExtension {
     pub const EXTENSION_TYPE: u8 = 1;
+    pub const LEN: usize = 8 + std::mem::size_of::<ChronoExtension>();
 
     pub fn new(
         authority: Pubkey,

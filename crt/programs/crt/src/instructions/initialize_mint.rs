@@ -8,7 +8,15 @@ use crate::extensions::ChronoExtension;
 pub struct InitializeMint<'info> {
     #[account(init, payer = payer, space = Mint::LEN)]
     pub mint: Account<'info, Mint>,
-    /// decay pool should be set at token account level
+    
+    #[account(
+        init,
+        payer = payer,
+        space = ChronoExtension::LEN,
+        seeds = [b"chrono_extension", mint.key().as_ref()],
+        bump
+    )]
+    pub chrono_extension: Account<'info, ChronoExtension>,
     pub authority: Signer<'info>,
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -48,7 +56,6 @@ pub fn handler(
             pause_type,
             equation_params,
         ) {
-            // Check if ReUp percentage is provided when pause_type is ReUp
             let reup_percentage = match (p_type, reup_percentage) {
                 (PauseType::ReUp, Some(percentage)) if percentage <= 100 => percentage,
                 (PauseType::ReUp, Some(_)) => return Err(TokenError::InvalidReUpPercentage.into()),
@@ -57,21 +64,13 @@ pub fn handler(
                 (_, None) => 0, // Default value when not ReUp
             };
 
-            let extension = ChronoExtension::new(
-                ctx.accounts.authority.key(),
-                program_id,
-                eq_type,
-                p_type,
-                params,
-                reup_percentage,
-            );
-
-            let extension_data = extension.try_to_vec()?;
-            // Append extension data to the end of the mint account
-            let mint_info = mint.to_account_info();
-            let mut data = mint_info.try_borrow_mut_data()?;
-            let start_index = Mint::LEN;
-            data[start_index..start_index + extension_data.len()].copy_from_slice(&extension_data);
+            let chrono_extension = &mut ctx.accounts.chrono_extension;
+            chrono_extension.authority = ctx.accounts.authority.key();
+            chrono_extension.program_id = program_id;
+            chrono_extension.equation_type = eq_type;
+            chrono_extension.pause_type = p_type;
+            chrono_extension.equation_params = params;
+            chrono_extension.reup_percentage = reup_percentage;
         } else {
             return Err(ProgramError::InvalidArgument.into());
         }

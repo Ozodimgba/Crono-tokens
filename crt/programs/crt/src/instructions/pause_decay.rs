@@ -7,7 +7,7 @@ use crate::events::PauseEvent;
 use crate::extensions::ChronoExtension;
 
 #[derive(Accounts)]
-pub struct Pause<'info> {
+pub struct PauseDecay<'info> {
     #[account(mut)]
     pub mint: Account<'info, Mint>,
     #[account(mut)]
@@ -18,7 +18,7 @@ pub struct Pause<'info> {
     pub chrono_hook_program: AccountInfo<'info>,
 }
 
-pub fn pause(ctx: Context<Pause>) -> Result<()> {
+pub fn handler(ctx: Context<PauseDecay>) -> Result<()> {
     let mint = &mut ctx.accounts.mint;
     let token_account = &mut ctx.accounts.token_account;
     let binding = mint.to_account_info();
