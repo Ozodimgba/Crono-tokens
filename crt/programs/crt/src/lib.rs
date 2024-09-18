@@ -11,7 +11,7 @@ mod tokenizer;
 use instructions::*;
 use crate::state::{ChronoEquationType, PauseType, EquationParams};
 
-declare_id!("CYonGNksY6zhLRxKu9Wk5L6p3VqznLfNdKZkAiFvpzt9");
+declare_id!("crnXvAtgkLMzJKEFdveTZ4Redy3mHa1YY9UXP9wZ91c");
 
 #[program]
 pub mod chrono_token {

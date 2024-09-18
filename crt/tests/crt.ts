@@ -90,7 +90,7 @@ export class ChronoTokenSDK {
 
   ///To do: update initMint to use extensions account and in turn, create get balance with an account structure rather than data
   
-  async initializeMint(
+   async initializeMint(
     mint: PublicKey,
     authority: Keypair,
     decimals: number,
